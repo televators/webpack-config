@@ -1,0 +1,8 @@
+// NOTE: Because we're using Webpack, we can use relative paths for images here in source even if the destination structure is wildly different, because Webpack intelligently remaps URIs. THAT'S a blessing.
+.hero {
+  width: 100%;
+  min-height: 300px;
+  background-image: url( "../images/swc-banner.jpg" );
+  background-size: cover;
+  background-position: center;
+}
