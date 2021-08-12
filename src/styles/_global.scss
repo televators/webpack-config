@@ -1,0 +1,42 @@
+// Not sure if this is from newer SCSS spec or Webpack, but in video
+// he's using the vars like `variables.$cream` instead of just using
+// `$cream` in the current scope. Idk why you'd want to but doing it
+// the old fashion way was working fine for me????
+//------------------------------------------------------------------//
+//* UPDATE: I'm just behind on the times. When you import with @use,
+//* you have to specify a namespace, like `variables` in dude's vid.
+//* If you don't want to use namespacing and just use them plain per
+//* tradition, use `@use 'a-module' as *`. This adds to current scope
+//-------------------------------------------------------------------//
+// Nifty tidbit from https://webpack.js.org/loaders/sass-loader/#resolving-import-at-rules
+// `@import "~bootstrap"` -> using '~' before the name of the Sass
+// module tells sass-loader to look inside node_modules to resolve
+// the path. Neat!
+
+@use 'variables' as *;
+
+:root {
+  --heading-size: #{ $base-font-size * 2.5 };
+}
+
+body {
+  margin: 0;
+  background-color: $background-color;
+  color: $cream;
+  font-size: $base-font-size;
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: var( --heading-size );
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button {
+  font-size: 1.5rem;
+}
