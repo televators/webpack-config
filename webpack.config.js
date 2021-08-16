@@ -20,8 +20,29 @@ module.exports = {
   // stats: 'errors-warnings', //* Use this to squash most of the output in CLI.
   stats: 'normal',
 
+  output: {
+    assetModuleFilename: 'images/[hash][ext][query]',
+  },
+
   module: {
     rules: [
+      {
+        test: /\.(png|jpe?g|gif|svg|ico|web[pm])$/i,
+        //* `asset/resource` copies the actual file to the dist folder.
+        type: 'asset/resource',
+        //* `asset/inline` converts them to base64 data inlined in the `src` attr. Can blow up size of CSS/JS/HTML outputs.
+        // type: 'asset/inline',
+        //* `asset` is a generic/auto type with which Webpack will decide on best way for each image based on size (max-size is 8KB by default; image larger than that will be copied as file, smaller will be inlined)
+        type: 'asset',
+        //* `parser` exposes settings for how Webpack determines best URL handling when using `asset`.
+        // parser: {
+        //   //* Rules specifically for how WP determines treatment of images.
+        //   // NOTE: Only applies when `type` is `asset`.
+        //   dataUrlCondition: {
+        //     maxSize: 20 * 1024, // 30 x 1KB in bytes, e.g., 30KB
+        //   },
+        // },
+      },
       {
         //* Regex: placing a `?` after a char makes it optional; this ~= `(js|jsx)`.
         test: /\.jsx?$/,
@@ -33,7 +54,15 @@ module.exports = {
       {
         //* Can be written as `(scss|css)`, `(s(a|c)|c)ss`, `s?css`, or `(s[ac]|c)ss`. Regex is fun!
         test: /\.(sc|c)ss$/i,
-        // NOTE: Even though these are listed LTR, the shit is processed through these RTL, so sass then postcss, then css, then MiniCssExtractPlugin.
+        // NOTE: Even though these are listed LTR, the shit is processed through these RTL, so sass
+        // then postcss, then css, then MiniCssExtractPlugin.
+        // NOTE: You can pass each of the loaders as an object, with `loader` and `options` props.
+        // MiniCssExtractPlugin works fine here as just `MiniCssExtractPlugin.loader` but for reference,
+        // it'd be like this:
+        // {
+        //   loader: MiniCssExtractPlugin.loader,
+        //   options: { publicPath: "" } // Jimmy has no idea what this does and neither do I. Kek.
+        // },
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
