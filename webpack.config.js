@@ -3,7 +3,9 @@
 
 const path = require( 'path' ),
 // CopyPlugin = require( 'copy-webpack-plugin' ),
-MiniCssExtractPlugin = require('mini-css-extract-plugin');
+MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+HtmlWebpackPlugin = require('html-webpack-plugin'),
+{ CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // Bug with either webpack-dev-server or Webpack 5 itself where having a .browserslistrc will fuck up live reloading (of at least [S]CSS). Manually specifying the target prop will fix it until an official fix is patched in.
 let mode = 'development',
@@ -21,6 +23,7 @@ module.exports = {
   stats: 'normal',
 
   output: {
+    path: path.resolve( __dirname, 'dist' ),
     assetModuleFilename: 'images/[hash][ext][query]',
   },
 
@@ -108,6 +111,10 @@ module.exports = {
     //     }
     //   ],
     // } ),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
+    new HtmlWebpackPlugin( {
+      template: './src/index.html',
+    } ),
   ],
 };
