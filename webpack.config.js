@@ -1,19 +1,41 @@
 // NOTE: 'path' is a Node core module. Have to require/import it but it's always there.
 // NOTE: See note about CopyWebpackPlugin below in plugins object.
+// NOTE: ReactRefreshWebpackPlugin enables live reloading of JS while maintaining local state.
 
 const path = require( 'path' ),
 // CopyPlugin = require( 'copy-webpack-plugin' ),
 MiniCssExtractPlugin = require('mini-css-extract-plugin'),
 HtmlWebpackPlugin = require('html-webpack-plugin'),
-{ CleanWebpackPlugin } = require('clean-webpack-plugin');
+{ CleanWebpackPlugin } = require('clean-webpack-plugin'),
+ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 // Bug with either webpack-dev-server or Webpack 5 itself where having a .browserslistrc will fuck up live reloading (of at least [S]CSS). Manually specifying the target prop will fix it until an official fix is patched in.
 let mode = 'development',
 target = 'web';
 
+const plugins = [
+  // NOTE: I added this early on so that I could have plain old passthrough copying of static images to dist/ without importing through JS. Disabling since I've gotten to part in course where he's doing the standard, imported-by-JS setup with Webpack 5's Asset Modules, which I tried at first. My original images are in oldimages folder.
+  // NOTE: If you want to reinstall, the package is `"copy-webpack-plugin": "^9.0.1"`.
+  // new CopyPlugin( {
+  //   patterns: [
+  //     {
+  //       from: 'src/images',
+  //       to: 'img',
+  //     }
+  //   ],
+  // } ),
+  new CleanWebpackPlugin(),
+  new MiniCssExtractPlugin(),
+  new HtmlWebpackPlugin( {
+    template: './src/index.html',
+  } ),
+];
+
  if ( process.env.NODE_ENV === 'production' ) {
    mode   = 'production';
    target = 'browserslist';
+  } else {
+    plugins.push( new ReactRefreshWebpackPlugin() );
  }
 
 module.exports = {
@@ -21,6 +43,8 @@ module.exports = {
   target: target,
   // stats: 'errors-warnings', //* Use this to squash most of the output in CLI.
   stats: 'normal',
+  // NOTE: This is needed for ReactRefreshWebpackPlugin to work in Webpack.
+  entry: './src/index.js',
 
   output: {
     path: path.resolve( __dirname, 'dist' ),
@@ -100,21 +124,5 @@ module.exports = {
     disableHostCheck: true
   },
 
-  plugins: [
-    // NOTE: I added this early on so that I could have plain old passthrough copying of static images to dist/ without importing through JS. Disabling since I've gotten to part in course where he's doing the standard, imported-by-JS setup with Webpack 5's Asset Modules, which I tried at first. My original images are in oldimages folder.
-    // NOTE: If you want to reinstall, the package is `"copy-webpack-plugin": "^9.0.1"`.
-    // new CopyPlugin( {
-    //   patterns: [
-    //     {
-    //       from: 'src/images',
-    //       to: 'img',
-    //     }
-    //   ],
-    // } ),
-    new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin(),
-    new HtmlWebpackPlugin( {
-      template: './src/index.html',
-    } ),
-  ],
+  plugins: plugins,
 };
